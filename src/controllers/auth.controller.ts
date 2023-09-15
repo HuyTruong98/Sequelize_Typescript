@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { errorCode, successCode, failCode, createCode } from '../middleware/response';
-import { createUser, loginUser, getAll, refreshAuth } from '../services/auth.service';
+import { createCode, errorCode, failCode, successCode } from '../middleware/response';
+import { createUser, getAll, loginUser, refreshAuth } from '../services/auth.service';
 
 // Get All User
 const getAllUser = async (req: Request, res: Response) => {
@@ -43,13 +43,13 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-const refreshTokens = async (req: Request, res: Response) => {
+const refreshToken = async (req: Request & { user?: any }, res: Response) => {
   try {
-    const newAccessToken = await refreshAuth(req);
-    successCode(res, newAccessToken, 'Refresh token success.');
+    const newAccessToken = await refreshAuth(req.body.refreshToken);
+    successCode(res, newAccessToken, 'Refresh token success !');
   } catch (error) {
-    errorCode(res, 'Internal server error !');
+    errorCode(res, 'Failed to refresh Access Token !');
   }
 };
+export { getAllUser, login, refreshToken, signUp };
 
-export { getAllUser, signUp, login, refreshTokens };

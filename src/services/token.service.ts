@@ -1,6 +1,5 @@
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user';
-import { Request, Response, NextFunction } from 'express';
 import moment from 'moment';
 import { tokenTypes } from '../config/tokens';
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -21,12 +20,12 @@ const generateToken = async (id: number, expires: any, type: string) => {
   }
 };
 
-const generateAuthTokens = async (data: User) => {
+const generateAuthTokens = async (id: number) => {
   const accessTokenExpires = moment().add(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 'minutes');
-  const accessToken = await generateToken(data.user_id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessToken = await generateToken(id, accessTokenExpires, tokenTypes.ACCESS);
 
   const refreshTokenExpires = moment().add(process.env.JWT_REFRESH_EXPIRATION_DAYS, 'days');
-  const refreshToken = await generateToken(data.user_id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = await generateToken(id, refreshTokenExpires, tokenTypes.REFRESH);
 
   const payload = {
     accessToken: accessToken,
@@ -62,11 +61,12 @@ const verifyToken = (
 
 const decodeToken = (token: string) => {
   try {
-    const decoded = jwt.decode(token, { complete: true });
+    const decoded = jwt.verify(token, String(SECRET_KEY));
     return decoded;
   } catch (error) {
     return null;
   }
 };
 
-export { generateAuthTokens, verifyToken, decodeToken };
+export { decodeToken, generateAuthTokens, verifyToken };
+

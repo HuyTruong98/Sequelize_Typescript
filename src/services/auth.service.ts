@@ -1,8 +1,9 @@
-import { initModels } from '../models/init-models';
-import { sequelize } from '../models';
 import bcrypt from 'bcrypt';
-import { generateAuthTokens, verifyToken } from './token.service';
-import { Request, Response } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
+import { tokenTypes } from '../config/tokens';
+import { sequelize } from '../models';
+import { initModels } from '../models/init-models';
+import { decodeToken, generateAuthTokens } from './token.service';
 
 const model = initModels(sequelize);
 
@@ -35,7 +36,7 @@ const loginUser = async (email: string, password: string) => {
   if (user) {
     const isPasswordCorrect = bcrypt.compareSync(password, user.dataValues.pass_word);
     if (isPasswordCorrect) {
-      const token = await generateAuthTokens({ ...user.dataValues, pass_word: '' });
+      const token = await generateAuthTokens(user.dataValues.user_id);
       return token;
     }
   }
@@ -43,32 +44,22 @@ const loginUser = async (email: string, password: string) => {
   return null;
 };
 
-const refreshAuth = async (
-  req: Request & {
-    user?: any;
-  },
-) => {
-  return new Promise<string>((resolve, reject) => {
-    const authHeader = req.body.refreshToken;
-    const refreshToken = authHeader && authHeader.split(' ')[1];
+const refreshAuth = async (refreshToken: string) => {
+  try {
+    const decodedToken = decodeToken(refreshToken) as JwtPayload;
 
-    if (!refreshToken) {
-      reject(new Error('Refresh Token is required !'));
+    if (decodedToken?.type !== tokenTypes.REFRESH) {
+      throw new Error('Invalid Refresh Token Type');
     }
 
-    verifyToken(req, {} as Response, async (err) => {
-      if (err) {
-        reject(new Error('Invalid Refresh Token !'));
-      }
+    const payload = generateAuthTokens(Number(decodedToken?.sub));
 
-      try {
-        // const newAccessToken = await generateAuthTokens(req.user);
-        console.log(req.user);
-      } catch (error) {
-        reject(new Error('Failed to refresh Access Token !'));
-      }
-    });
-  });
+    return payload;
+  } catch (error) {
+    console.error('Error refreshing Access Token:', error);
+    throw new Error('Failed to refresh Access Token');
+  }
 };
 
-export { getAll, createUser, loginUser, getUserByEmail, refreshAuth };
+export { createUser, getAll, getUserByEmail, loginUser, refreshAuth };
+
