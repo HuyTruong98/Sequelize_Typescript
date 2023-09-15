@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 // 200
-export const successCode = (res: Response, data: any, message: string) => {
+const successCode = (res: Response, data: any, message: string) => {
   res.status(200).json({
     message,
     content: data,
@@ -32,16 +32,10 @@ const notFoundCode = (res: Response, message: string) => {
 };
 
 // 500
-export const errorCode = (res: Response, message: string) => {
+const errorCode = (res: Response, message: string) => {
   res.status(500).json({
     message,
   });
 };
 
-module.exports = {
-  successCode,
-  failCode,
-  errorCode,
-  createCode,
-  notFoundCode,
-};
+export { createCode, errorCode, failCode, notFoundCode, successCode };
