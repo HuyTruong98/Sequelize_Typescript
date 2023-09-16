@@ -7,7 +7,7 @@ services:
       - MYSQL_ROOT_PASSWORD=$PASSWORD
       - MYSQL_DATABASE=$DATABASE
     ports:
-      - 127.0.0.1:3307:3306
+      - 3306:3306
     volumes:
       - mysql_db:/var/lib/mysql
     networks:
@@ -28,7 +28,7 @@ services:
       - 8080:8080
     networks:
       - node-network
-    command: ["yarn", "start"]  # Thay lệnh CMD thành một lệnh tùy chỉnh
+    command: ["yarn", "start"]
 volumes:
   mysql_db:
     driver: local
