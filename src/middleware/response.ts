@@ -4,7 +4,7 @@ import { Response } from 'express';
 const successCode = (res: Response, data: any, message: string) => {
   res.status(200).json({
     message,
-    content: data,
+    body: data,
   });
 };
 
@@ -12,7 +12,7 @@ const successCode = (res: Response, data: any, message: string) => {
 const createCode = (res: Response, data: any, message: string) => {
   res.status(201).json({
     message,
-    content: data,
+    body: data,
   });
 };
 
@@ -20,7 +20,6 @@ const createCode = (res: Response, data: any, message: string) => {
 const failCode = (res: Response, data: any, message: string) => {
   res.status(400).json({
     message,
-    content: data,
   });
 };
 

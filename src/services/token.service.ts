@@ -4,10 +4,11 @@ import moment from 'moment';
 import { tokenTypes } from '../config/tokens';
 const SECRET_KEY = process.env.SECRET_KEY;
 
-const generateToken = async (id: number, expires: any, type: string) => {
+const generateToken = async (id: number, expires: any, type: string, role: string) => {
   try {
     const payload = {
       sub: id,
+      role,
       iat: moment().unix(),
       exp: expires.unix(),
       type,
@@ -20,12 +21,12 @@ const generateToken = async (id: number, expires: any, type: string) => {
   }
 };
 
-const generateAuthTokens = async (id: number) => {
+const generateAuthTokens = async (id: number, role: string) => {
   const accessTokenExpires = moment().add(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 'minutes');
-  const accessToken = await generateToken(id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessToken = await generateToken(id, accessTokenExpires, tokenTypes.ACCESS, role);
 
   const refreshTokenExpires = moment().add(process.env.JWT_REFRESH_EXPIRATION_DAYS, 'days');
-  const refreshToken = await generateToken(id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = await generateToken(id, refreshTokenExpires, tokenTypes.REFRESH, role);
 
   const payload = {
     accessToken: accessToken,
@@ -69,4 +70,3 @@ const decodeToken = (token: string) => {
 };
 
 export { decodeToken, generateAuthTokens, verifyToken };
-

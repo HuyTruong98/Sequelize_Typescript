@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { JwtPayload } from 'jsonwebtoken';
+import { roleTypes } from '../config/role';
 import { tokenTypes } from '../config/tokens';
 import { sequelize } from '../models';
 import { initModels } from '../models/init-models';
@@ -15,13 +16,14 @@ const getAll = async () => {
 const createUser = async (fullName: string, email: string, password: string) => {
   const existingUser = await model.user.findOne({ where: { email } });
   if (existingUser) {
-    return null; // Trả về null nếu email đã tồn tại
+    throw new Error('Email already exists');
   }
 
   const newUser = await model.user.create({
     full_name: fullName,
     email,
     pass_word: bcrypt.hashSync(password, 10),
+    role: roleTypes.ROLE_USER,
   });
 
   return newUser;
@@ -36,7 +38,7 @@ const loginUser = async (email: string, password: string) => {
   if (user) {
     const isPasswordCorrect = bcrypt.compareSync(password, user.dataValues.pass_word);
     if (isPasswordCorrect) {
-      const token = await generateAuthTokens(user.dataValues.user_id);
+      const token = await generateAuthTokens(user.dataValues.user_id, user.dataValues.role);
       return token;
     }
   }
@@ -52,7 +54,7 @@ const refreshAuth = async (refreshToken: string) => {
       throw new Error('Invalid Refresh Token Type');
     }
 
-    const payload = generateAuthTokens(Number(decodedToken?.sub));
+    const payload = generateAuthTokens(Number(decodedToken?.sub), decodedToken?.role);
 
     return payload;
   } catch (error) {
@@ -62,4 +64,3 @@ const refreshAuth = async (refreshToken: string) => {
 };
 
 export { createUser, getAll, getUserByEmail, loginUser, refreshAuth };
-

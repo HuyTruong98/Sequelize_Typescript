@@ -5,6 +5,7 @@ export class User extends Model {
   public full_name!: string | null;
   public email!: string | null;
   public pass_word!: string | null;
+  public role!: string | null;
 
   public static initTable(sequelize: Sequelize) {
     return super.init(
@@ -24,6 +25,10 @@ export class User extends Model {
           allowNull: true,
         },
         pass_word: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+        },
+        role: {
           type: DataTypes.STRING(255),
           allowNull: true,
         },
