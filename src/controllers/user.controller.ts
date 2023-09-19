@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createCode, errorCode, failCode, successCode } from '../middleware/response';
-import { create, getAll, update } from '../services/user.service';
+import { create, deleteById, getAll, updateById } from '../services/user.service';
 import { optionsUser } from '../@types/dto';
 
 const getAllUserByParam = async (req: Request, res: Response) => {
@@ -35,12 +35,27 @@ const createUser = async (req: Request, res: Response) => {
 
 const updateUserById = async (req: Request, res: Response) => {
   try {
-    const { food_id } = req.params;
+    const { user_id } = req.params;
     const { full_name, pass_word } = req.body;
-    const updateUser = await update(Number(food_id), full_name, pass_word);
+
+    const updateUser = await updateById(Number(user_id), full_name, pass_word);
+    if (updateUser) successCode(res, true, 'Update success !');
   } catch (error) {
     return errorCode(res, 'Internal server error !');
   }
 };
 
-export { getAllUserByParam, createUser, updateUserById };
+const deleteUserById = async (req: Request, res: Response) => {
+  try {
+    const { user_id } = req.params;
+    const confirmDelete = await deleteById(Number(user_id));
+    if (confirmDelete) successCode(res, true, 'Update success !');
+  } catch (error: any) {
+    if (error.message.includes('foreign key constraint fails')) {
+      return errorCode(res, 'Foreign key constraint fails !');
+    }
+    return errorCode(res, 'Internal server error !');
+  }
+};
+
+export { getAllUserByParam, createUser, updateUserById, deleteUserById };

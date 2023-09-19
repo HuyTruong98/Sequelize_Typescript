@@ -54,6 +54,40 @@ const create = async (full_name: string, email: string, pass_word: string) => {
   return newUser;
 };
 
-const update = async (food_id: number, full_name: string, pass_word: string) => {};
+const getById = async (id: number) => {
+  const currentUser = await model.user.findOne({ where: { user_id: id } });
 
-export { getAll, create, update };
+  if (currentUser) {
+    return currentUser.dataValues;
+  } else {
+    throw new Error('User does not exist !');
+  }
+};
+
+const updateById = async (user_id: number, full_name: string, pass_word: string) => {
+  const currentUser = await getById(user_id);
+  const body = {
+    ...currentUser,
+    full_name,
+    pass_word: bcrypt.hashSync(pass_word, 10),
+  };
+  if (body) {
+    const updateUser = await model.user.update(body, {
+      where: {
+        user_id,
+      },
+    });
+    return updateUser;
+  }
+};
+
+const deleteById = async (user_id: number) => {
+  const currentUser = await model.user.destroy({
+    where: {
+      user_id,
+    },
+  });
+  if (currentUser) return true;
+};
+
+export { getAll, create, updateById, deleteById };
