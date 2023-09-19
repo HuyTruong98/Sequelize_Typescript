@@ -6,7 +6,7 @@ import { tokenTypes } from '../config/tokens';
 import { sequelize } from '../models';
 import { initModels } from '../models/init-models';
 import { generateUniqueCode } from '../utils/verifyCode';
-import { verifyEmailAccount } from './email.service';
+import { sendResetPasswordEmail, verifyEmailAccount } from './email.service';
 import { decodeToken, generateAuthTokens } from './token.service';
 
 const model = initModels(sequelize);
@@ -70,8 +70,8 @@ const refreshAuth = async (refreshToken: string) => {
 };
 
 const verifyEmail = async (email: string) => {
-  const user = await model.verification_codes.findOne({ where: { email } });
-  if (user) {
+  const currentUser = await model.verification_codes.findOne({ where: { email } });
+  if (currentUser) {
     throw new Error('Email already exists');
   }
   const createCode = generateUniqueCode();
@@ -86,4 +86,14 @@ const verifyEmail = async (email: string) => {
   }
 };
 
-export { createUser, getAll, getUserByEmail, loginUser, refreshAuth, verifyEmail };
+const resetPwdByEmail = async (email: string) => {
+  const currentUser = await model.verification_codes.findOne({ where: { email } });
+  if (!currentUser) {
+    throw new Error('Email has not been verified');
+  }
+
+  const createCode = generateUniqueCode();
+  const sendEmail = await sendResetPasswordEmail(email, createCode);
+};
+
+export { createUser, getAll, getUserByEmail, loginUser, refreshAuth, verifyEmail, resetPwdByEmail };

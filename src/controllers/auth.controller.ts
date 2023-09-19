@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createCode, errorCode, failCode, successCode } from '../middleware/response';
-import { createUser, getAll, loginUser, refreshAuth, verifyEmail } from '../services/auth.service';
+import { createUser, getAll, loginUser, refreshAuth, resetPwdByEmail, verifyEmail } from '../services/auth.service';
 
 // Get All User
 const getAllUser = async (req: Request, res: Response) => {
@@ -68,4 +68,17 @@ const verifyEmailAccount = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllUser, login, refreshToken, signUp, verifyEmailAccount };
+const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const newPwd = await resetPwdByEmail(email);
+    console.log('🚀 ~ newPwd:', newPwd);
+  } catch (error: any) {
+    if (error.message === 'Email has not been verified') {
+      return failCode(res, {}, 'Email has not been verified');
+    }
+    return errorCode(res, 'Internal server error !');
+  }
+};
+
+export { getAllUser, login, refreshToken, signUp, verifyEmailAccount, resetPassword };

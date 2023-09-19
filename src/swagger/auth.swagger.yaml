@@ -174,3 +174,41 @@ paths:
             properties:
               message:
                 type: string
+  /auth/reset-password:
+    post:
+      description: Reset pwd
+      tags: [Auth]
+      parameters:
+        - in: body
+          name: credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+            example:
+              email: fake@example.com
+          description: Reset pwd
+      responses:
+        '200':
+          description: Reset pwd
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '400':
+          description: Email has not been verified !
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '500':
+          description: Internal server error !
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
