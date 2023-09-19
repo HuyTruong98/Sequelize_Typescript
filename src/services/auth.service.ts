@@ -1,9 +1,12 @@
 import bcrypt from 'bcrypt';
 import { JwtPayload } from 'jsonwebtoken';
+import moment from 'moment';
 import { roleTypes } from '../config/role';
 import { tokenTypes } from '../config/tokens';
 import { sequelize } from '../models';
 import { initModels } from '../models/init-models';
+import { generateUniqueCode } from '../utils/verifyCode';
+import { verifyEmailAccount } from './email.service';
 import { decodeToken, generateAuthTokens } from './token.service';
 
 const model = initModels(sequelize);
@@ -15,15 +18,18 @@ const getAll = async () => {
 
 const createUser = async (fullName: string, email: string, password: string) => {
   const existingUser = await model.user.findOne({ where: { email } });
+  const existingVerifyCode = await model.verification_codes.findOne({ where: { email } });
   if (existingUser) {
     throw new Error('Email already exists');
+  } else if (!existingVerifyCode) {
+    throw new Error('Email has not been verified');
   }
-
   const newUser = await model.user.create({
     full_name: fullName,
     email,
     pass_word: bcrypt.hashSync(password, 10),
     role: roleTypes.ROLE_USER,
+    regDt: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'),
   });
 
   return newUser;
@@ -63,4 +69,21 @@ const refreshAuth = async (refreshToken: string) => {
   }
 };
 
-export { createUser, getAll, getUserByEmail, loginUser, refreshAuth };
+const verifyEmail = async (email: string) => {
+  const user = await model.verification_codes.findOne({ where: { email } });
+  if (user) {
+    throw new Error('Email already exists');
+  }
+  const createCode = generateUniqueCode();
+  const sendEmail = await verifyEmailAccount(email);
+
+  if (sendEmail) {
+    return await model.verification_codes.create({
+      email,
+      code: createCode,
+      regDt: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'),
+    });
+  }
+};
+
+export { createUser, getAll, getUserByEmail, loginUser, refreshAuth, verifyEmail };

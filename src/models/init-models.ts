@@ -7,6 +7,7 @@ import { RateRes } from './rate_res';
 import { Restaurant } from './restaurant';
 import { SubFood } from './sub_food';
 import { User } from './user';
+import { VerificationCode } from './verification_codes';
 
 export function initModels(sequelize: Sequelize) {
   const food = Food.initTable(sequelize);
@@ -17,6 +18,7 @@ export function initModels(sequelize: Sequelize) {
   const restaurant = Restaurant.initTable(sequelize);
   const sub_food = SubFood.initTable(sequelize);
   const user = User.initTable(sequelize);
+  const verification_codes = VerificationCode.initTable(sequelize);
 
   food.belongsToMany(user, { as: 'user_id_user_orders', through: order, foreignKey: 'food_id', otherKey: 'user_id' });
   restaurant.belongsToMany(user, { as: 'user_id_users', through: like_res, foreignKey: 'res_id', otherKey: 'user_id' });
@@ -65,5 +67,6 @@ export function initModels(sequelize: Sequelize) {
     restaurant,
     sub_food,
     user,
+    verification_codes,
   };
 }

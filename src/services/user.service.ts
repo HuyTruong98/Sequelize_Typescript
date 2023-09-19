@@ -4,6 +4,7 @@ import { roleTypes } from '../config/role';
 import { sequelize } from '../models';
 import { initModels } from '../models/init-models';
 
+import moment from 'moment';
 import { Op } from 'sequelize';
 
 const model = initModels(sequelize);
@@ -49,6 +50,7 @@ const create = async (full_name: string, email: string, pass_word: string) => {
     email,
     pass_word: bcrypt.hashSync(pass_word, 10),
     role: roleTypes.ROLE_USER,
+    regDt: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'),
   });
 
   return newUser;
@@ -70,6 +72,7 @@ const updateById = async (user_id: number, full_name: string, pass_word: string)
     ...currentUser,
     full_name,
     pass_word: bcrypt.hashSync(pass_word, 10),
+    modDt: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'),
   };
   if (body) {
     const updateUser = await model.user.update(body, {
@@ -90,4 +93,4 @@ const deleteById = async (user_id: number) => {
   if (currentUser) return true;
 };
 
-export { getAll, create, updateById, deleteById };
+export { create, deleteById, getAll, updateById };

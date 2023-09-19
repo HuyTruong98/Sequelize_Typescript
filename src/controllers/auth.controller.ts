@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createCode, errorCode, failCode, successCode } from '../middleware/response';
-import { createUser, getAll, loginUser, refreshAuth } from '../services/auth.service';
+import { createUser, getAll, loginUser, refreshAuth, verifyEmail } from '../services/auth.service';
 
 // Get All User
 const getAllUser = async (req: Request, res: Response) => {
@@ -24,6 +24,8 @@ const signUp = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (error.message === 'Email already exists') {
       return failCode(res, {}, 'Email already exists');
+    } else if (error.message === 'Email has not been verified') {
+      return failCode(res, {}, 'Email has not been verified');
     }
     return errorCode(res, 'Internal server error !');
   }
@@ -52,4 +54,18 @@ const refreshToken = async (req: Request & { user?: any }, res: Response) => {
     return errorCode(res, 'Failed to refresh Access Token !');
   }
 };
-export { getAllUser, login, refreshToken, signUp };
+
+const verifyEmailAccount = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const newCode = await verifyEmail(email);
+    if (newCode) return createCode(res, true, 'Verify email success !');
+  } catch (error: any) {
+    if (error.message === 'Email already exists') {
+      return failCode(res, {}, 'Email already exists');
+    }
+    return errorCode(res, 'Internal server error !');
+  }
+};
+
+export { getAllUser, login, refreshToken, signUp, verifyEmailAccount };

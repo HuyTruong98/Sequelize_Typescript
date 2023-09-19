@@ -6,6 +6,8 @@ export class User extends Model {
   public email!: string | null;
   public pass_word!: string | null;
   public role!: string | null;
+  public regDt!: string | null;
+  public modDt!: string | null;
 
   public static initTable(sequelize: Sequelize) {
     return super.init(
@@ -29,7 +31,15 @@ export class User extends Model {
           allowNull: true,
         },
         role: {
-          type: DataTypes.STRING(255),
+          type: DataTypes.STRING(200),
+          allowNull: true,
+        },
+        regDt: {
+          type: DataTypes.STRING(200),
+          allowNull: true,
+        },
+        modDt: {
+          type: DataTypes.STRING(200),
           allowNull: true,
         },
       },

@@ -2,7 +2,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 
 const swaggerDefinition = {
   info: {
-    title: 'API Food App',
+    title: 'API Sequelize_Typescript App',
     version: '1.0.0',
     description: 'This is a REST API application made with Express. It retrieves data from JSONPlaceholder.',
   },

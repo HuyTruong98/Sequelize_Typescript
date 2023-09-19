@@ -136,3 +136,41 @@ paths:
             properties:
               message:
                 type: string
+  /auth/verify-email:
+    post:
+      description: Verify email
+      tags: [Auth]
+      parameters:
+        - in: body
+          name: credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+            example:
+              email: fake@example.com
+          description: Verify email before sign up
+      responses:
+        '200':
+          description: Verify email successful !
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '400':
+          description: Email already exits !
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        '500':
+          description: Internal server error !
+          schema:
+            type: object
+            properties:
+              message:
+                type: string

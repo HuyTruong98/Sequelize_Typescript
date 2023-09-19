@@ -49,7 +49,7 @@ const deleteUserById = async (req: Request, res: Response) => {
   try {
     const { user_id } = req.params;
     const confirmDelete = await deleteById(Number(user_id));
-    if (confirmDelete) successCode(res, true, 'Update success !');
+    if (confirmDelete) successCode(res, true, 'Delete success !');
   } catch (error: any) {
     if (error.message.includes('foreign key constraint fails')) {
       return errorCode(res, 'Foreign key constraint fails !');
