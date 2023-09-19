@@ -7,6 +7,6 @@
     "strict": true,
     "esModuleInterop": true
   },
-  "include": ["src/**/*.ts", "src/models/init-models.js"],
+  "include": ["src/**/*.ts", "src/models/init-models.ts"],
   "exclude": ["node_modules"]
 }
