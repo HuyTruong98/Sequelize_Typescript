@@ -4,8 +4,9 @@ import {
   login,
   signUp,
   refreshToken,
-  verifyEmailAccount,
+  sendEmailVerifyAccount,
   resetPassword,
+  getTokenVerifyEmail,
 } from '../controllers/auth.controller';
 import { verifyToken } from '../services/token.service';
 
@@ -19,7 +20,9 @@ authRoute.post('/login', login);
 
 authRoute.post('/refresh-tokens', refreshToken);
 
-authRoute.post('/verify-email', verifyEmailAccount);
+authRoute.post('/send-email-verify', sendEmailVerifyAccount);
+
+authRoute.post('/verify-email', getTokenVerifyEmail);
 
 authRoute.post('/reset-password', resetPassword);
 

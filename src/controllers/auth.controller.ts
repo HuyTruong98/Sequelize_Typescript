@@ -1,6 +1,14 @@
 import { Request, Response } from 'express';
 import { createCode, errorCode, failCode, successCode } from '../middleware/response';
-import { createUser, getAll, loginUser, refreshAuth, resetPwdByEmail, verifyEmail } from '../services/auth.service';
+import {
+  createUser,
+  generateVerifyEmailToken,
+  getAll,
+  loginUser,
+  refreshAuth,
+  resetPwdByEmail,
+  sendEmailUrlVerify,
+} from '../services/auth.service';
 
 // Get All User
 const getAllUser = async (req: Request, res: Response) => {
@@ -24,8 +32,6 @@ const signUp = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (error.message === 'Email already exists') {
       return failCode(res, {}, 'Email already exists');
-    } else if (error.message === 'Email has not been verified') {
-      return failCode(res, {}, 'Email has not been verified');
     }
     return errorCode(res, 'Internal server error !');
   }
@@ -41,7 +47,10 @@ const login = async (req: Request, res: Response) => {
     } else {
       return failCode(res, '', 'Email or password is incorrect !');
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Verify email before login') {
+      return failCode(res, {}, 'Verify email before login');
+    }
     return errorCode(res, 'Internal server error !');
   }
 };
@@ -55,14 +64,31 @@ const refreshToken = async (req: Request & { user?: any }, res: Response) => {
   }
 };
 
-const verifyEmailAccount = async (req: Request, res: Response) => {
+const sendEmailVerifyAccount = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const newCode = await verifyEmail(email);
-    if (newCode) return createCode(res, true, 'Verify email success !');
+    const newCode = await sendEmailUrlVerify(email);
+    if (newCode) return createCode(res, true, 'Send email success !');
   } catch (error: any) {
-    if (error.message === 'Email already exists') {
-      return failCode(res, {}, 'Email already exists');
+    if (error.message === 'Email has not been exists') {
+      return failCode(res, {}, 'Email has not been exists');
+    } else if (error.message === 'Email already verify') {
+      return failCode(res, {}, 'Email already verify');
+    }
+    return errorCode(res, 'Internal server error !');
+  }
+};
+
+const getTokenVerifyEmail = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    const verify = await generateVerifyEmailToken(token);
+    if (verify) return createCode(res, true, 'Verify email success !');
+  } catch (error: any) {
+    if (error.message === 'TokenExpiredError: jwt expired') {
+      return failCode(res, {}, 'Token expired');
+    } else if (error.message === 'JsonWebTokenError: invalid signature') {
+      return failCode(res, {}, 'Invalid token');
     }
     return errorCode(res, 'Internal server error !');
   }
@@ -72,7 +98,7 @@ const resetPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
     const newPwd = await resetPwdByEmail(email);
-    console.log('🚀 ~ newPwd:', newPwd);
+    console.log('🚀 resetPassword ~ newPwd:', newPwd);
   } catch (error: any) {
     if (error.message === 'Email has not been verified') {
       return failCode(res, {}, 'Email has not been verified');
@@ -81,4 +107,4 @@ const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllUser, login, refreshToken, signUp, verifyEmailAccount, resetPassword };
+export { getAllUser, login, refreshToken, signUp, sendEmailVerifyAccount, resetPassword, getTokenVerifyEmail };

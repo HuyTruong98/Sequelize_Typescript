@@ -136,7 +136,7 @@ paths:
             properties:
               message:
                 type: string
-  /auth/verify-email:
+  /auth/send-email-verify:
     post:
       description: Verify email
       tags: [Auth]
@@ -174,9 +174,9 @@ paths:
             properties:
               message:
                 type: string
-  /auth/reset-password:
+  /auth/verify-email:
     post:
-      description: Reset pwd
+      description: Verify email with token
       tags: [Auth]
       parameters:
         - in: body
@@ -185,14 +185,14 @@ paths:
           schema:
             type: object
             properties:
-              email:
+              token:
                 type: string
             example:
-              email: fake@example.com
-          description: Reset pwd
+              token: abcxyz
+          description: Verify email with token
       responses:
         '200':
-          description: Reset pwd
+          description: Verify email with token
           schema:
             type: object
             properties:

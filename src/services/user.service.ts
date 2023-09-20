@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { optionsUser } from '../@types/dto';
 import { roleTypes } from '../config/role';
 import { sequelize } from '../models';
-import { initModels } from '../models/init-models';
+import initModels from '../models/init-models';
 
 import moment from 'moment';
 import { Op } from 'sequelize';
@@ -68,6 +68,10 @@ const getById = async (id: number) => {
 
 const updateById = async (user_id: number, full_name: string, pass_word: string) => {
   const currentUser = await getById(user_id);
+  if (!currentUser) {
+    throw new Error('User has not been exists');
+  }
+
   const body = {
     ...currentUser,
     full_name,
@@ -93,4 +97,4 @@ const deleteById = async (user_id: number) => {
   if (currentUser) return true;
 };
 
-export { create, deleteById, getAll, updateById };
+export { create, deleteById, getAll, updateById, getById };

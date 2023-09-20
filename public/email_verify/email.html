@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        background-color: #ffffff;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h3 {
+        color: #333;
+      }
+
+      p {
+        font-size: 16px;
+        color: #777;
+      }
+
+      .code {
+        font-size: 20px;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+        margin-top: 10px;
+        background-color: black;
+      }
+
+      .footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #999;
+      }
+
+      .link-container {
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        max-height: 40px; /* Đặt độ cao tối đa của phần tử */
+      }
+
+      .link {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: inline-block;
+        max-width: 100%;
+        vertical-align: middle;
+        color: #fff !important;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>Dear User,</h3>
+      <p>Thank you for signing up with our service. Your account has been successfully verified.</p>
+      <div class="code">
+        <div class="link-container">
+          <a href="<%= linkToVerify %>" class="link">Verify</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p>If you did not sign up for this service, please ignore this email.</p>
+    </div>
+  </body>
+</html>

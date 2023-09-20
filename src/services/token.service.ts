@@ -4,7 +4,7 @@ import moment from 'moment';
 import { tokenTypes } from '../config/tokens';
 const SECRET_KEY = process.env.SECRET_KEY;
 
-const generateToken = async (id: number | string, expires: any, type: string, role: string) => {
+const generateToken = async (id: number, expires: any, type: string, role: string) => {
   try {
     const payload = {
       sub: id,
@@ -64,9 +64,9 @@ const decodeToken = (token: string) => {
   try {
     const decoded = jwt.verify(token, String(SECRET_KEY));
     return decoded;
-  } catch (error) {
-    return null;
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
-export { decodeToken, generateAuthTokens, verifyToken };
+export { decodeToken, generateAuthTokens, verifyToken, generateToken };

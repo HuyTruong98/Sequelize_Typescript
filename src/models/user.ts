@@ -20,27 +20,32 @@ export class User extends Model {
         },
         full_name: {
           type: DataTypes.STRING(255),
-          allowNull: true,
+          allowNull: false,
         },
         email: {
           type: DataTypes.STRING(255),
-          allowNull: true,
+          allowNull: false,
         },
         pass_word: {
           type: DataTypes.STRING(255),
-          allowNull: true,
+          allowNull: false,
         },
         role: {
           type: DataTypes.STRING(200),
-          allowNull: true,
+          allowNull: false,
         },
         regDt: {
           type: DataTypes.STRING(200),
-          allowNull: true,
+          allowNull: false,
         },
         modDt: {
           type: DataTypes.STRING(200),
           allowNull: true,
+        },
+        isVerified: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         },
       },
       {
