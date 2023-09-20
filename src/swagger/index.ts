@@ -20,7 +20,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['src/swagger/auth.swagger.yaml', 'src/swagger/user.swagger.yaml'],
+  apis: ['src/routes/auth.route.ts', 'src/routes/user.route.ts'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
